@@ -38,7 +38,7 @@ def createTodaysGames(games, df, odds):
         if odds is not None:
             game_odds = odds[home_team + ':' + away_team]
             todays_games_uo.append(game_odds['under_over_odds'])
-            
+
             home_team_odds.append(game_odds[home_team]['money_line_odds'])
             away_team_odds.append(game_odds[away_team]['money_line_odds'])
 
@@ -47,7 +47,7 @@ def createTodaysGames(games, df, odds):
 
             home_team_odds.append(input(home_team + ' odds: '))
             away_team_odds.append(input(away_team + ' odds: '))
-        
+
         # calculate days rest for both teams
         dateparse = lambda x: datetime.strptime(x, '%d/%m/%Y %H:%M')
         schedule_df = pd.read_csv('Data/nba-2022-UTC.csv', parse_dates=['Date'], date_parser=dateparse)
@@ -83,7 +83,7 @@ def main():
     if args.game and args.odds:
         odds = SbrOddsProvider(sportsbook=args.odds).get_odds()
         games = create_todays_games_from_odds(odds)
-        
+
     if args.odds:
         odds = SbrOddsProvider(sportsbook=args.odds).get_odds()
         games = create_todays_games_from_odds(odds)
@@ -106,7 +106,7 @@ def main():
                 odds = {args.game: odds[args.game]}
             except:
                 print("Invalid Game Argument")
-                return 
+                return
     else:
         data = get_todays_games_json(todays_games_url)
         games = create_todays_games(data)
@@ -116,19 +116,19 @@ def main():
     if args.nn:
         print("------------Neural Network Model Predictions-----------")
         data = tf.keras.utils.normalize(data, axis=1)
-        NN_Runner.nn_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team_odds)
+        NN_Runner.nn_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team_odds, args.kc)
         print("-------------------------------------------------------")
     if args.xgb:
         print("---------------XGBoost Model Predictions---------------")
-        XGBoost_Runner.xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team_odds)
+        XGBoost_Runner.xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team_odds, args.kc)
         print("-------------------------------------------------------")
     if args.A:
         print("---------------XGBoost Model Predictions---------------")
-        XGBoost_Runner.xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team_odds)
+        XGBoost_Runner.xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team_odds, args.kc)
         print("-------------------------------------------------------")
         data = tf.keras.utils.normalize(data, axis=1)
         print("------------Neural Network Model Predictions-----------")
-        NN_Runner.nn_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team_odds)
+        NN_Runner.nn_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team_odds, args.kc)
         print("-------------------------------------------------------")
 
 
@@ -139,5 +139,6 @@ if __name__ == "__main__":
     parser.add_argument('-A', action='store_true', help='Run all Models')
     parser.add_argument('-odds', help='Sportsbook to fetch from. (fanduel, draftkings, betmgm, pointsbet, caesars, wynn, bet_rivers_ny')
     parser.add_argument('-game', help='Sportsbook to fetch from. (fanduel, draftkings, betmgm, pointsbet, caesars, wynn, bet_rivers_ny')
+    parser.add_argument('-kc', action='store_true', help='Calculates percentage of bankroll to bet based on model edge')
     args = parser.parse_args()
     main()
