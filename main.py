@@ -80,6 +80,10 @@ def createTodaysGames(games, df, odds):
 
 def main():
     odds = None
+    if args.game and args.odds:
+        odds = SbrOddsProvider(sportsbook=args.odds).get_odds()
+        games = create_todays_games_from_odds(odds)
+        
     if args.odds:
         odds = SbrOddsProvider(sportsbook=args.odds).get_odds()
         games = create_todays_games_from_odds(odds)
@@ -96,6 +100,13 @@ def main():
             for g in odds.keys():
                 home_team, away_team = g.split(":")
                 print(f"{away_team} ({odds[g][away_team]['money_line_odds']}) @ {home_team} ({odds[g][home_team]['money_line_odds']})")
+        if args.game:
+            try:
+                games = [args.game.split(":")]
+                odds = {args.game: odds[args.game]}
+            except:
+                print("Invalid Game Argument")
+                return 
     else:
         data = get_todays_games_json(todays_games_url)
         games = create_todays_games(data)
@@ -127,5 +138,6 @@ if __name__ == "__main__":
     parser.add_argument('-nn', action='store_true', help='Run with Neural Network Model')
     parser.add_argument('-A', action='store_true', help='Run all Models')
     parser.add_argument('-odds', help='Sportsbook to fetch from. (fanduel, draftkings, betmgm, pointsbet, caesars, wynn, bet_rivers_ny')
+    parser.add_argument('-game', help='Sportsbook to fetch from. (fanduel, draftkings, betmgm, pointsbet, caesars, wynn, bet_rivers_ny')
     args = parser.parse_args()
     main()

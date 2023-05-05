@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+    <title>NBA Machine Learning Picks</title>
+    <style>
+      .green {color: green}
+      .red {color: red}
+      td {padding: 2px;}
+      td.numbers { width: 40px; text-align: right;}
+      table {margin-bottom: 6px;}
+      th, td {text-align: center;}
+    </style>
+  </head>
+  <body>
+    <main class="container">
+        <h3> <a href="/"> back </a>  </h3>
+        <h1>  Admin Pannel </h1>
+
+        <form action="/admin_create" >
+            <h2> Create new User </h2>
+            <input type="text" placeholder="username" name="user">
+            <input type="text" placeholder="password" name="pw">
+            <input type="submit" value="Create">
+        </form>
+        <br><br>
+        <table>
+            <thead>
+                <th></th>
+                <th> Username </th>
+                <th> Password </th>
+                <th> Admin </th>
+            </thead>
+            <tbody>
+                <h2> Current Users</h2>
+                {%for user in users%}
+                        <tr>
+                            <td>
+                                {%if user['username']!=me%}
+                                    <a href="/admin_delete?user={{user['username']}}"> delete </a>
+                                {%endif%}
+                            </td>
+                            <td>
+                                {{user["username"]}}
+                            </td>
+                            <td>
+                                {{user["password"]}}
+                            </td>
+                            <td>
+                                {{user["admin"]}}
+                            </td>
+                        </tr>
+                {%endfor%}   
+            </tbody>
+        </table>
+    </main>
+  </body>
+</html>

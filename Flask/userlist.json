@@ -1,0 +1,1 @@
+{"admin": {"password": "Test1234", "admin": true}, "testuser": {"password": "Test1234", "admin": false}, "Hallo": {"password": "Welt", "admin": false}}
