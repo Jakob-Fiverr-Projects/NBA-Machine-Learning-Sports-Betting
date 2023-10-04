@@ -8,7 +8,7 @@ import time
 from datetime import datetime
 from threading import Timer
 
-supported_books = ["fanduel",  "draftkings", "betmgm", "pointsbet", "caesars", "wynn", "bet_rivers_ny"]
+supported_books = ["fanduel",  "draftkings", "betmgm", "pointsbet", "wynn", "bet_rivers_ny"]
 
 @lru_cache(maxsize=None)
 def fetch_book(ttl_hash=None, book="fanduel", game=""):
@@ -55,7 +55,10 @@ def update_cache():
     for game in fanduel.keys():
         for sportsbook in supported_books:
             print(f"{sportsbook} -> {game}")
-            fetch_book(ttl_hash=get_ttl_hash(), game=":".join(game.split(":")[::-1]), book=sportsbook)
+            try:
+                fetch_book(ttl_hash=get_ttl_hash(), game=":".join(game.split(":")[::-1]), book=sportsbook)
+            except:
+                pass
     x=datetime.today()
     y=x.replace(day=x.
     day+1, hour=0, minute=0, second=0, microsecond=0)
@@ -141,7 +144,10 @@ def see_game():
             books[sportsbook] = fetch_book(ttl_hash=get_ttl_hash(), game=game, book=sportsbook)
             books[sportsbook] =  books[sportsbook][list(books[sportsbook].keys())[0]]
         except:
-            del books[sportsbook]
+            try:
+                del books[sportsbook]
+            except:
+                pass
 
     return render_template('game.html', today=date.today(), data=books, sportsbooks=list(books.keys()))
 
